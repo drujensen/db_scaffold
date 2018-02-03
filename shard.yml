@@ -1,0 +1,14 @@
+name: db_scaffold
+version: 0.1.0
+
+authors:
+  - Dru Jensen <drujensen@gmail.com>
+
+crystal: 0.24.1
+
+license: MIT
+
+dependencies:
+  amber:
+    github: amberframework/amber
+    version: ~> 0.6.5
