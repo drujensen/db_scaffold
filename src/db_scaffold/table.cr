@@ -1,21 +1,57 @@
+require "amber"
+require "db"
+require "mysql"
+
 class DbScaffold::Table
-  def initialize(@table_name)
+  def initialize(@table_name : String)
   end
 
   def name
-    @table_name.chomp("s").snake_case
+    @table_name.chomp("s").camelcase
   end
 
   def fields
-    results = Granite::ORM::Base.query(schema)
-    results.map { |c, d, l| "#{c}:#{d}" }.join(" ")
+    results = [] of String
+    if database_url = Amber.settings.database_url
+      DB.open database_url do |db|
+        db.query schema do |rs|
+          rs.each do
+            results << "#{rs.read(String)}:#{mapping(rs.read(String))}"
+          end
+        end
+      end
+      results.join(" ")
+    else
+      raise "database_url not found"
+    end
   end
 
   private def schema
-    return "SELECT column_name, data_type, character_maximum_length" \
+    return "SELECT column_name, data_type" \
            " FROM information_schema.columns" \
            " WHERE table_name = '#{@table_name}'" \
            " AND table_schema = (SELECT DATABASE());"
+  end
+
+  private def mapping(db_type : String)
+    case db_type
+    when .includes?("bool")
+      "boolean"
+    when .includes?("int")
+      "integer"
+    when .includes?("time")
+      "timestamp"
+    when .includes?("date")
+      "date"
+    when .includes?("float")
+      "float"
+    when .includes?("real")
+      "real"
+    when .includes?("text")
+      "text"
+    else
+      "string"
+    end
   end
 end
 

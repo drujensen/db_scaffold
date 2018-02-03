@@ -7,8 +7,9 @@ DB Scaffold is an Amber plugin utility to generate scaffolding from an existing 
 Add this to your application's `shard.yml`:
 
 ```yaml
-target:
-  db_scaffold: lib/db_scaffold/src/db_scaffold.cr
+targets:
+  db_scaffold: 
+    main: lib/db_scaffold/src/db_scaffold.cr
 
 dependencies:
   db_scaffold:
