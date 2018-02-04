@@ -4,7 +4,7 @@ DB Scaffold is an Amber plugin utility to generate scaffolding from an existing 
 
 ## Installation
 
-Add this to your application's `shard.yml`:
+Add this to your Amber Projects `shard.yml`:
 
 ```yaml
 targets:
@@ -18,9 +18,12 @@ dependencies:
 
 ## Usage
 
+Make sure the `database_url` in the `config/environments/development.yml` is pointing to your existing database.
+
+Then run:
 ```crystal
-shards build db_scaffold
-./bin/db_scaffold (table_name | *)
+shards build
+bin/db_scaffold (table_name | --all)
 ```
 
 ## Contributing

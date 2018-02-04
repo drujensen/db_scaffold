@@ -16,7 +16,11 @@ class DbScaffold::Table
       DB.open database_url do |db|
         db.query schema do |rs|
           rs.each do
-            results << "#{rs.read(String)}:#{mapping(rs.read(String))}"
+            name = rs.read(String)
+            db_type = rs.read(String)
+            name, type = mapping(name, db_type)
+            puts "#{name}:#{db_type} -> #{name}:#{type}"
+            results << "#{name}:#{type}"
           end
         end
       end
@@ -33,25 +37,30 @@ class DbScaffold::Table
            " AND table_schema = (SELECT DATABASE());"
   end
 
-  private def mapping(db_type : String)
-    case db_type
-    when .includes?("bool")
-      "boolean"
-    when .includes?("int")
-      "integer"
-    when .includes?("time")
-      "timestamp"
-    when .includes?("date")
-      "date"
-    when .includes?("float")
-      "float"
-    when .includes?("real")
-      "real"
-    when .includes?("text")
-      "text"
-    else
-      "string"
-    end
+  private def mapping(name : String, db_type : String)
+    return name.chomp("_id"), "ref" if name.includes?("_id")
+
+    type = case db_type
+           when .includes?("tinyint")
+             "boolean"
+           when .includes?("bigint")
+             "int64"
+           when .includes?("int")
+             "int"
+           when .includes?("date")
+             "timestamp"
+           when .includes?("time")
+             "timestamp"
+           when .includes?("float")
+             "float"
+           when .includes?("real")
+             "real"
+           when .includes?("text")
+             "text"
+           else
+             "string"
+           end
+    return name, type
   end
 end
 
