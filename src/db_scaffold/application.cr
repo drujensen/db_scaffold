@@ -3,19 +3,16 @@ require "db"
 require "mysql"
 
 class DbScaffold::Application
-  def initialize(table_name)
-    if table_name == "--all"
-      table_names.each do |table_name|
-        generate table_name
-      end
-    else
-      generate table_name
+  def initialize(recipe : Recipe)
+    recipe.tables = table_names if recipe.all
+    recipe.tables.each do |table_name|
+      generate table_name, recipe.type
     end
   end
 
-  private def generate(table_name : String)
+  private def generate(table_name : String, type : String)
     table = Table.new(table_name)
-    `./bin/amber g scaffold #{table.name} #{table.fields}`
+    `./bin/amber g #{type} #{table.name} #{table.fields}`
   end
 
   private def table_names

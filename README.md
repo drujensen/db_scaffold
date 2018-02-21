@@ -23,7 +23,12 @@ Make sure the `database_url` in the `config/environments/development.yml` is poi
 Then run:
 ```crystal
 shards build
-bin/db_scaffold (table_name | --all)
+bin/db_scaffold [--all|--type TYPE] (table_names)
+```
+
+If you want to generate only **model**, use `--type` option.
+```shell
+bin/db_scaffold --type model users
 ```
 
 ## Contributing
